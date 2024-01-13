@@ -35,11 +35,25 @@ func (a *Actor) Play() {
 }
 
 func (a *Actor) formURL(action model.Action) string {
-	if a.baseURL == "" {
-		return action.URL
+	templatedURL, err := utils.ParseTemplate(action.URL, a.session)
+	if err != nil {
+		panic(err)
 	}
 
-	return fmt.Sprintf("%s%s", a.baseURL, action.URL)
+	if a.baseURL == "" {
+		return templatedURL
+	}
+
+	return fmt.Sprintf("%s%s", a.baseURL, templatedURL)
+}
+
+func (a *Actor) formBody(action model.Action) string {
+	templatedBody, err := utils.ParseTemplate(action.Body, a.session)
+	if err != nil {
+		panic(err)
+	}
+
+	return templatedBody
 }
 
 func (a *Actor) parseJson(body string, storeValues map[string]string) error {
@@ -65,21 +79,22 @@ func (a *Actor) execute(action model.Action) {
 	fmt.Printf("[%s] Executing %s %s Body = %s\n", a.uuid, action.Method, action.URL, action.Body)
 
 	url := a.formURL(action)
+	reqBody := a.formBody(action)
 	startTs := time.Now()
-	body, statusCode, err := a.httpClient.MakeRequest(action.Method, url, action.Body, action.Headers)
+	body, statusCode, err := a.httpClient.MakeRequest(action.Method, url, reqBody, action.Headers)
 	timeTaken := time.Since(startTs).Milliseconds()
 	if err != nil {
-		fmt.Printf("[%s] ERROR | url: %s | status: %d | %dms | err: %d", a.uuid, action, statusCode, timeTaken, err)
+		fmt.Printf("[%s] ERROR | url: %s | status: %d | %dms | err: %d", a.uuid, url, statusCode, timeTaken, err)
 		return
 	}
 
 	if action.StoreValues != nil {
 		err := a.parseJson(body, action.StoreValues)
 		if err != nil {
-			fmt.Printf("[%s] ERROR | url: %s | status: %d | json.err: %s", a.uuid, action, statusCode, err)
+			fmt.Printf("[%s] ERROR | url: %s | status: %d | json.err: %s", a.uuid, url, statusCode, err)
 			return
 		}
 	}
 
-	fmt.Printf("[%s] SUCCESS | url: %s | status: %d | %dms | body: %s\n", a.uuid, action, statusCode, timeTaken, body)
+	fmt.Printf("[%s] SUCCESS | url: %s | status: %d | %dms | body: %s\n", a.uuid, url, statusCode, timeTaken, body)
 }
