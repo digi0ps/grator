@@ -56,6 +56,18 @@ func (a *Actor) formBody(action model.Action) string {
 	return templatedBody
 }
 
+func (a *Actor) formHeaders(action model.Action) map[string]string {
+	templatedHeaders := map[string]string{}
+	for key, value := range action.Headers {
+		templatedValue, err := utils.ParseTemplate(value, a.session)
+		if err != nil {
+			panic(err)
+		}
+		templatedHeaders[key] = templatedValue
+	}
+	return templatedHeaders
+}
+
 func (a *Actor) parseJson(body string, storeValues map[string]string) error {
 	var data map[string]interface{}
 	err := json.Unmarshal([]byte(body), &data)
@@ -79,9 +91,10 @@ func (a *Actor) execute(action model.Action) {
 	fmt.Printf("[%s] Executing %s %s Body = %s\n", a.uuid, action.Method, action.URL, action.Body)
 
 	url := a.formURL(action)
-	reqBody := a.formBody(action)
+	templatedBody := a.formBody(action)
+	templatedHeaders := a.formHeaders(action)
 	startTs := time.Now()
-	body, statusCode, err := a.httpClient.MakeRequest(action.Method, url, reqBody, action.Headers)
+	body, statusCode, err := a.httpClient.MakeRequest(action.Method, url, templatedBody, templatedHeaders)
 	timeTaken := time.Since(startTs).Milliseconds()
 	if err != nil {
 		fmt.Printf("[%s] ERROR | url: %s | status: %d | %dms | err: %d", a.uuid, url, statusCode, timeTaken, err)
