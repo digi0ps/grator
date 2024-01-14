@@ -17,6 +17,8 @@ actions:
     token: data.token
 
 - method: GET
+  repeat: 3
+  waitFor: 1000
   url: /api/geo/revgeo?latlng=12.835787029432241,80.13895099577203
   headers:
     Authorization: Bearer %token%

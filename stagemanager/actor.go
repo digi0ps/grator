@@ -29,7 +29,14 @@ func NewActor(uuid string, httpClient httpclient.HttpClient, baseURL string, act
 
 func (a *Actor) Play() {
 	for _, action := range a.actions {
-		a.execute(action)
+		for i := 1; i <= action.Times(); i++ {
+			a.execute(action)
+
+			if action.ShouldWait() {
+				time.Sleep(time.Duration(action.WaitFor) * time.Millisecond)
+			}
+
+		}
 	}
 	return
 }

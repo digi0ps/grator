@@ -4,8 +4,21 @@ type Action struct {
 	Method      string            `yaml:"method"`
 	URL         string            `yaml:"url"`
 	Body        string            `yaml:"body"`
+	Repeat      int               `yaml:"repeat"`
+	WaitFor     int               `yaml:"waitFor"`
 	Headers     map[string]string `yaml:"headers"`
 	StoreValues map[string]string `yaml:"storeValues"`
+}
+
+func (a *Action) Times() int {
+	if a.Repeat == 0 {
+		return 1
+	}
+	return a.Repeat
+}
+
+func (a *Action) ShouldWait() bool {
+	return a.WaitFor > 0
 }
 
 func GetSampleActions() []Action {
