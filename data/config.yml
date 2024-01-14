@@ -1,0 +1,22 @@
+baseURL: "http://157.245.97.150:80"
+maxActors: 1
+actions:
+- method: GET
+  url: /api/ping/
+
+- method: POST
+  url: /api/otp/generate
+  body: "{\"phone_number\": \"9840543050\"}"
+  storeValues:
+    phone_otp: data.otp
+
+- method: POST
+  url: /api/otp/customer/authenticate
+  body: "{\"phone_number\": \"9840543050\", \"otp\": \"%phone_otp%\"}"
+  storeValues:
+    token: data.token
+
+- method: GET
+  url: /api/geo/revgeo?latlng=12.835787029432241,80.13895099577203
+  headers:
+    Authorization: Bearer %token%

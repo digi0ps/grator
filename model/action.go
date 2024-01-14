@@ -1,11 +1,11 @@
 package model
 
 type Action struct {
-	Method      string
-	URL         string
-	Body        string
-	Headers     map[string]string
-	StoreValues map[string]string
+	Method      string            `yaml:"method"`
+	URL         string            `yaml:"url"`
+	Body        string            `yaml:"body"`
+	Headers     map[string]string `yaml:"headers"`
+	StoreValues map[string]string `yaml:"storeValues"`
 }
 
 func GetSampleActions() []Action {

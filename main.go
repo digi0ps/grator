@@ -12,7 +12,7 @@ import (
 func main() {
 	fmt.Println("Starting executing...")
 
-	config := model.NewConfig("http://157.245.97.150:80", 1)
+	config := model.NewConfigFromYamlFile("/Users/sravichandran/Code/digi0ps/grator/data/config.yml")
 	client := httpclient.NewDefaultClient(&http.Client{
 		Timeout: time.Duration(10 * time.Second),
 	})
