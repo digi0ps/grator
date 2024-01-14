@@ -21,6 +21,10 @@ func (a *Action) ShouldWait() bool {
 	return a.WaitFor > 0
 }
 
+func (a *Action) ShouldLog(part string) bool {
+	return false
+}
+
 func GetSampleActions() []Action {
 	return []Action{
 		{Method: "GET", URL: "/api/ping/"},

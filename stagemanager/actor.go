@@ -116,5 +116,8 @@ func (a *Actor) execute(action model.Action) {
 		}
 	}
 
-	fmt.Printf("[%s] SUCCESS | url: %s | status: %d | %dms | body: %s\n", a.uuid, url, statusCode, timeTaken, body)
+	fmt.Printf("[%s] SUCCESS | url: %s | status: %d | %dms \n", a.uuid, url, statusCode, timeTaken)
+	if action.ShouldLog("body") {
+		fmt.Printf("[%s] Body: %s\n", a.uuid, body)
+	}
 }

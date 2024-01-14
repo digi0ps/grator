@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var regex *regexp.Regexp = regexp.MustCompile(`%([a-zA-Z0-9_-]+)%`)
+var regex = regexp.MustCompile(`%([a-zA-Z0-9_-]+)%`)
 
 func ParseTemplate(target string, data map[string]interface{}) (string, error) {
 	matches := regex.FindAllStringSubmatch(target, -1)

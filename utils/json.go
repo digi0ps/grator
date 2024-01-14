@@ -14,12 +14,10 @@ func ExtractValue(data map[string]interface{}, search string) (interface{}, erro
 	target := keys[len(keys)-1]
 	keys = keys[:len(keys)-1]
 
-	fmt.Println("keys = ", keys, " target = ", target)
 	var current = data
 	for _, key := range keys {
 		if val, ok := current[key].(map[string]interface{}); ok {
 			current = val
-			fmt.Println("key = ", key, " val = ", val)
 		} else {
 			return nil, fmt.Errorf("Key %s not found", key)
 		}
